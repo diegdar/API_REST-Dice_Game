@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GameResource;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +30,7 @@ class GameController extends Controller
 
             // Devuelve un array con el nombre y el porcentaje de victorias del usuario.
             return [
-                'name' => $user->nickname, // Suponiendo que hay un campo nickname en el modelo User
+                'nickname' => $user->nickname, // Suponiendo que hay un campo nickname en el modelo User
                 'win_rate' => $winRate,
             ];
         });
