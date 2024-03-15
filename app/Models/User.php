@@ -23,8 +23,7 @@ class User extends Authenticatable
     protected $fillable = [//asignacion masiva para que solo permita crear valores por estos campos
         'nickname',
         'email',
-        'password',
-        'user_type',
+        'password'
     ];
 
     /**
