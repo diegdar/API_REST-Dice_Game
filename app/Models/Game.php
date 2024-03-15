@@ -10,6 +10,8 @@ class Game extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;//impide que se cree por defecto los campos timestamps    
+
     public function users():HasMany//El nombre de la función está en plural porque estamos haciendo referencia a muchas partes (usuarios)
     {
         return $this->hasMany(User::class);//Aquí establecemos la relación: $this(Game) puede tener muchos User(usuarios)-(aquí tenemos que poner el nombre de la Clase en singular).
