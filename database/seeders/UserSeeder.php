@@ -5,32 +5,38 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash; // Import Hash facade
 
 class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
     public function run(): void
     {
-        $user = new User();
-        $user->nickname = "lolo";
-        $user->email = "lolo@gmail.com";
-        $user->password = "1234";
-        $user->save();
+        $users = [
+            [
+                'nickname' => "lolo",
+                'email' => "lolo@gmail.com",
+                'password' => "1234",
+            ],
+            [
+                'nickname' => "ricky",
+                'email' => "ricky@gmail.com",
+                'password' => "1234",
+            ],
+            [
+                'nickname' => "ana",
+                'email' => "ana@gmail.com",
+                'password' => "1234",
+            ],
+        ];
 
-        $user2 = new User();
-        $user2->nickname = "ricky";
-        $user2->email = "ricky@gmail.com";
-        $user2->password = "1234";
-        $user2->save();
-
-        $user3 = new User();
-        $user3->nickname = "ana";
-        $user3->email = "ana@gmail.com";
-        $user3->password = "1234";
-        $user3->save();
-
-
+        foreach ($users as $user) {
+            $user['password'] = Hash::make($user['password']); // Encripta las passwords antes de guardarlas en la BBDD
+            User::create($user);
+        }
     }
 }
