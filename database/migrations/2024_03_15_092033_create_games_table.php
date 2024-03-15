@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->string('nickname', 50)->default('Anonimo')->nullable();
-            $table->string('email')->unique();
-            $table->timestamp('created_at');
-            $table->string('password');
-            $table->rememberToken();
+            $table->integer('die1_value');
+            $table->integer('die2_value');
+            $table->boolean('was_game_won')->default(false);
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('games');
     }
 };
