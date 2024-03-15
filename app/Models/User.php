@@ -20,10 +20,11 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
+    protected $fillable = [//asignacion masiva para que solo permita crear valores por estos campos
+        'nickname',
         'email',
         'password',
+        'user_type',
     ];
 
     /**

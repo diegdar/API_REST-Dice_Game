@@ -10,6 +10,13 @@ class Game extends Model
 {
     use HasFactory;
 
+    protected $fillable = [//asignacion masiva para que solo permita crear valores por estos campos
+        'die1_value',
+        'die2_value',
+        'was_game_won',
+        'user_id'        
+    ];
+
     public $timestamps = false;//impide que se cree por defecto los campos timestamps    
 
     public function users():HasMany//El nombre de la función está en plural porque estamos haciendo referencia a muchas partes (usuarios)
