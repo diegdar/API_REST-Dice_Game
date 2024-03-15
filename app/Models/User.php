@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public $timestamps = false;//impide que se cree por defecto los campos timestamps    
+
     /**
      * The attributes that are mass assignable.
      *
