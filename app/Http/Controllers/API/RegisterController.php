@@ -34,7 +34,7 @@ class RegisterController extends Controller
         $user = User::create($input);
         // Generar un token de acceso para el usuario recién registrado
         $success['token'] = $user->createToken('MyApp')->accessToken;
-        $success['nickname'] = $user->name;
+        $success['nickname'] = $user->nickname;
 
         // Retornar una respuesta exitosa con el token y el nombre del usuario
         return $this->sendResponse($success, 'User registered successfully.');
@@ -48,11 +48,12 @@ class RegisterController extends Controller
             $user = Auth::user();
             // Generar un token de acceso para el usuario autenticado
             $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['nickname'] = $user->name;
+            $success['nickname'] = $user->nickname;
             // Retornar una respuesta exitosa con el token y el nombre del usuario
             return $this->sendResponse($success, 'User login successfully. ');
         } else {
             // Si la autenticación falla, retornar un error de no autorizado
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
         }
-    }}
+    }
+}
