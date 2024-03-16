@@ -18,8 +18,6 @@ use Illuminate\Http\Request;
     La función usort ordena el array $averageGamesWon utilizando la función de comparación $cmp. La función ordena el array de mayor a menor, colocando a los jugadores con mayor porcentaje de victorias al principio del array.
 2: El array original se modifica y se ordena en la misma variable $averageGamesWon. No se crea un nuevo array para almacenar el resultado ordenado.
 
-
-
 */
 
 class GameController extends Controller
@@ -57,7 +55,7 @@ class GameController extends Controller
     }
 
     // Calcula un ranking de los resultados de todos los jugadores
-    public function CalculatePlayersRanking()
+    private function CalculatePlayersRanking()
     {
         $averageGamesWon = $this->CalculateAverageGamesWon()->toArray();
 
@@ -84,7 +82,7 @@ class GameController extends Controller
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
-        $worstPlayer = $playersRanking[count($playersRanking) - 1];//toma el ultimo valor listado del array para obtener el peor del ranking
+        $worstPlayer = $playersRanking[count($playersRanking) - 1]; //toma el ultimo valor listado del array para obtener el peor del ranking
 
         return response()->json($worstPlayer);
     }
@@ -93,41 +91,54 @@ class GameController extends Controller
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
-        $bestPlayer = $playersRanking[0];//toma el ultimo valor listado del array para obtener el peor del ranking
+        $bestPlayer = $playersRanking[0]; //toma el ultimo valor listado del array para obtener el peor del ranking
 
         return response()->json($bestPlayer);
-
     }
-/*Metodos del Jugador Individual----------- */
+    /*Metodos del Jugador Individual----------- */
     // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
     public function throwDice($userId)
     {
         $player = User::find($userId);
 
         if (!$player) {
-            return $this->sendError('Invalid user ID.');
+            // Devuelve un error si el jugador no existe
+            return response()->json(['error' => 'User not found!'], 404);
         }
-
-        $die1 = rand(1,6);
-        $die2 = rand(1,6);
+        $die1 = rand(1, 6);
+        $die2 = rand(1, 6);
         $result = $die1 + $die2;
-        
+
         $wasGameWon = ($result == 7); //El resultado (verdadero o falso) se guardara en $wasGameWon
 
         $dataGame = [
             'user_id' => $userId,
-            'die1_value'=>$die1,
-            'die2_value'=>$die2,
-            'was_game_won'=>$wasGameWon
+            'die1_value' => $die1,
+            'die2_value' => $die2,
+            'was_game_won' => $wasGameWon
         ];
-        
-        $game = Game::create($dataGame);
 
+        $game = Game::create($dataGame);
         $game->save();
 
-        $dataGame = array_merge(["nickname" => $player->nickname], $dataGame);//agrega el nickname del jugador en la primera posicion para mostrar con los demas datos
-        
-        return response()->json($dataGame);
+        $dataGame = array_merge(["nickname" => $player->nickname], $dataGame); //agrega el nickname del jugador en la primera posicion para mostrar con los demas datos
 
+        return response()->json($dataGame);
+    }
+
+    // DELETE /players/{id}/games : Un jugador borra el listado de todas sus tiradas de dados
+    public function deletePlayerGames($userId)
+    {
+        // Comprueba si el jugador tiene partidas jugadas
+        $gamesCount = Game::where('user_id', $userId)->count();
+
+        if ($gamesCount === 0) {
+            // Devuelve un error si el jugador no tiene partidas jugadas
+            return response()->json(['error' => 'User has no games to delete!'], 404);
+        }
+        // Borra todas las partidas jugadas
+        Game::where('user_id', $userId)->delete();
+
+        return response()->json(['message' => 'All games for user deleted successfully!']);
     }
 }

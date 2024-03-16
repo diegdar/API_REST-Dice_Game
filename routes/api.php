@@ -29,7 +29,8 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/players/ranking/loser', [GameController::class, 'getWorstRankingPlayer']);
     Route::get('/players/ranking/winner ', [GameController::class, 'getBestRankingPlayer']);
 
-    Route::get('/players/{id}/games', [GameController::class, 'throwDice']);
+    Route::post('/players/{id}/games', [GameController::class, 'throwDice']);
+    Route::delete('/players/{id}/games', [GameController::class, 'deletePlayerGames']);
 });
 
 
