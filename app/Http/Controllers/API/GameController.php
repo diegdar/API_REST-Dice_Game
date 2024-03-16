@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\GameResource;
+use App\Http\Resources\GamePlayerResource;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -103,7 +103,7 @@ class GameController extends Controller
 
         if (!$player) {
             // Devuelve un error si el jugador no existe
-            return response()->json(['error' => 'User not found!'], 404);
+            return response()->json(['error' => 'Player not found!'], 404);
         }
         $die1 = rand(1, 6);
         $die2 = rand(1, 6);
@@ -134,11 +134,26 @@ class GameController extends Controller
 
         if ($gamesCount === 0) {
             // Devuelve un error si el jugador no tiene partidas jugadas
-            return response()->json(['error' => 'User has no games to delete!'], 404);
+            return response()->json(['error' => 'Player has no games to delete!'], 404);
         }
         // Borra todas las partidas jugadas
         Game::where('user_id', $userId)->delete();
 
         return response()->json(['message' => 'All games for user deleted successfully!']);
+    }
+
+    // GET /players/{id}/games : devuelve el listado de jugadas de un jugador/a
+    public function getGamesPlayer($userId)
+    {   //Se obtienen la colección de objetos Game del jugador
+        $gamesPlayer = Game::where('user_id', $userId)->get();
+        
+        // Comprueba si el jugador tiene partidas jugadas
+        if ($gamesPlayer->count() === 0) {
+            // Devuelve un error si el jugador no tiene partidas jugadas
+            return response()->json(['error' => 'Player has no games!'], 404);
+        }
+
+        return $this->sendResponse(GamePlayerResource::collection($gamesPlayer), 'Games Player'); //convierte la coleccion de objetos Game en un acoleccion de recursos GamePlayerResource
+
     }
 }

@@ -31,6 +31,7 @@ Route::middleware('auth:api')->group(function(){
 
     Route::post('/players/{id}/games', [GameController::class, 'throwDice']);
     Route::delete('/players/{id}/games', [GameController::class, 'deletePlayerGames']);
+    Route::get('/players/{id}/games', [GameController::class, 'getGamesPlayer']);
 });
 
 
