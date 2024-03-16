@@ -22,80 +22,7 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
-    private function CalculateAverageGamesWon()
-    {
-        // Devuelve todas las partidas de los jugadores que hayan jugado al menos una vez.
-        $players = User::with('games')->whereHas('games')->get();
-
-        // Devuelve el porcentaje de partidas ganadas de cada jugador.
-        return  $players->map(function ($user) {
-            // Cuenta el número total de partidas del usuario.
-            $totalGames = $user->games->count();
-
-            // Cuenta el número de partidas ganadas por el usuario.
-            $gamesWon = $user->games->where('was_game_won', true)->count();
-
-            // Cálculo del porcentaje de victorias y evita dividir por 0 si el jugador aun no ha jugado.
-            $winRate = $totalGames > 0 ? round(($gamesWon / $totalGames) * 100, 2) . '%' : 'No hay partidas jugadas';
-
-            // Devuelve un array con el nombre y el porcentaje de victorias del usuario.
-            return [
-                'NickName' => $user->nickname,
-                'win_rate' => $winRate,
-            ];
-        });
-    }
-
-    public function getPlayersGames(): JsonResponse
-    {
-        $averageGamesWon = $this->CalculateAverageGamesWon();
-        // Devuelve una respuesta JSON con la lista de jugadores y sus porcentajes de victorias.
-        return response()->json($averageGamesWon->toArray());
-    }
-
-    // Calcula un ranking de los resultados de todos los jugadores
-    private function CalculatePlayersRanking()
-    {
-        $averageGamesWon = $this->CalculateAverageGamesWon()->toArray();
-
-        // Función de comparación para ordenar por porcentaje de victorias (de mayor a menor)
-        $cmp = function ($a, $b) {/*nota 1*/
-            return $b['win_rate'] <=> $a['win_rate'];
-        };
-
-        // Ordena el array de jugadores usando la función de comparación
-        usort($averageGamesWon, $cmp);/*nota 1*/
-
-        return $averageGamesWon;/*nota 2*/
-    }
-
-    //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
-    public function getPlayersRanking()
-    {
-        $playersRanking = $this->CalculatePlayersRanking();
-
-        return response()->json($playersRanking);
-    }
-    // GET /players/ranking/loser: Devuelve el jugador con el peor porcentaje de exito de todos.
-    public function getWorstRankingPlayer()
-    {
-        $playersRanking = $this->CalculatePlayersRanking();
-
-        $worstPlayer = $playersRanking[count($playersRanking) - 1]; //toma el ultimo valor listado del array para obtener el peor del ranking
-
-        return response()->json($worstPlayer);
-    }
-    // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
-    public function getBestRankingPlayer()
-    {
-        $playersRanking = $this->CalculatePlayersRanking();
-
-        $bestPlayer = $playersRanking[0]; //toma el ultimo valor listado del array para obtener el peor del ranking
-
-        return response()->json($bestPlayer);
-    }
-    /*Metodos del Jugador Individual----------- */
+/*Metodos del Jugador Individual----------- */
     // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
     public function throwDice($userId)
     {
@@ -155,5 +82,82 @@ class GameController extends Controller
 
         return $this->sendResponse(GamePlayerResource::collection($gamesPlayer), 'Games Player'); //convierte la coleccion de objetos Game en un acoleccion de recursos GamePlayerResource
 
+    }
+
+/* Metodos colectivos -------------*/
+    // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
+    private function CalculateAverageGamesWon()
+    {
+        // Devuelve todas las partidas de los jugadores que hayan jugado al menos una vez.
+        $players = User::with('games')->whereHas('games')->get();
+
+        // Devuelve el porcentaje de partidas ganadas de cada jugador.
+        return  $players->map(function ($user) {
+            // Cuenta el número total de partidas del usuario.
+            $totalGames = $user->games->count();
+
+            // Cuenta el número de partidas ganadas por el usuario.
+            $gamesWon = $user->games->where('was_game_won', true)->count();
+
+            // Cálculo del porcentaje de victorias y evita dividir por 0 si el jugador aun no ha jugado.
+            $winRate = $totalGames > 0 ? round(($gamesWon / $totalGames) * 100, 2) . '%' : 'No hay partidas jugadas';
+
+            // Devuelve un array con el nombre y el porcentaje de victorias del usuario.
+            return [
+                'NickName' => $user->nickname,
+                'win_rate' => $winRate,
+            ];
+        });
+    }
+
+    // GET /players : devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos.
+    public function getPlayersGames(): JsonResponse
+    {
+        $averageGamesWon = $this->CalculateAverageGamesWon();
+        // Devuelve una respuesta JSON con la lista de jugadores y sus porcentajes de victorias.
+        return response()->json($averageGamesWon->toArray());
+    }
+
+    // Calcula un ranking de los resultados de todos los jugadores
+    private function CalculatePlayersRanking()
+    {
+        $averageGamesWon = $this->CalculateAverageGamesWon()->toArray();
+
+        // Función de comparación para ordenar por porcentaje de victorias (de mayor a menor)
+        $cmp = function ($a, $b) {/*nota 1*/
+            return $b['win_rate'] <=> $a['win_rate'];
+        };
+        // Ordena el array de jugadores usando la función de comparación
+        usort($averageGamesWon, $cmp);/*nota 1*/
+
+        return $averageGamesWon;/*nota 2*/
+    }
+
+    //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
+    public function getPlayersRanking()
+    {
+        $playersRanking = $this->CalculatePlayersRanking();
+
+        return response()->json($playersRanking);
+    }
+
+    // GET /players/ranking/loser: Devuelve el jugador con el peor porcentaje de exito de todos.
+    public function getWorstRankingPlayer()
+    {
+        $playersRanking = $this->CalculatePlayersRanking();
+
+        $worstPlayer = $playersRanking[count($playersRanking) - 1]; //toma el ultimo valor listado del array para obtener el peor del ranking
+
+        return response()->json($worstPlayer);
+    }
+    
+    // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
+    public function getBestRankingPlayer()
+    {
+        $playersRanking = $this->CalculatePlayersRanking();
+
+        $bestPlayer = $playersRanking[0]; //toma el ultimo valor listado del array para obtener el peor del ranking
+
+        return response()->json($bestPlayer);
     }
 }
