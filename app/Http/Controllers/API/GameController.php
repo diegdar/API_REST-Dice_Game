@@ -27,10 +27,10 @@ class GameController extends Controller
     // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
     private function CalculateAverageGamesWon()
     {
-        // Devuelve todas las partidas.
-        $players = User::with('games')->get();
+        // Devuelve todas las partidas de los jugadores que hayan jugado al menos una vez.
+        $players = User::with('games')->whereHas('games')->get();
 
-        // Mapeo de la colección de usuarios a una lista de datos.
+        // Devuelve el porcentaje de partidas ganadas de cada jugador.
         return  $players->map(function ($user) {
             // Cuenta el número total de partidas del usuario.
             $totalGames = $user->games->count();
@@ -80,7 +80,7 @@ class GameController extends Controller
         return response()->json($playersRanking);
     }
 
-    public function getWorstPlayerRanking()
+    public function getWorstRankingPlayer()
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
@@ -89,6 +89,14 @@ class GameController extends Controller
         return response()->json($worstPlayer);
     }
 
+    public function getBestRankingPlayer()
+    {
+        $playersRanking = $this->CalculatePlayersRanking();
 
+        $bestPlayer = $playersRanking[0];//toma el ultimo valor listado del array para obtener el peor del ranking
+
+        return response()->json($bestPlayer);
+
+    }
 
 }

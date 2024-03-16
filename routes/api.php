@@ -26,7 +26,8 @@ Route::post('login',[RegisterController::class, 'login']);
 Route::middleware('auth:api')->group(function(){
     Route::get('/players', [GameController::class, 'getPlayersGames']);
     Route::get('/players/ranking', [GameController::class, 'getPlayersRanking']);
-    Route::get('/players/ranking/loser', [GameController::class, 'getWorstPlayerRanking']);
+    Route::get('/players/ranking/loser', [GameController::class, 'getWorstRankingPlayer']);
+    Route::get('/players/ranking/winner ', [GameController::class, 'getBestRankingPlayer']);
 });
 
 
