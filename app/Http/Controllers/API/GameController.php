@@ -79,7 +79,7 @@ class GameController extends Controller
 
         return response()->json($playersRanking);
     }
-
+    // GET /players/ranking/loser: Devuelve el jugador con el peor porcentaje de exito de todos.
     public function getWorstRankingPlayer()
     {
         $playersRanking = $this->CalculatePlayersRanking();
@@ -88,7 +88,7 @@ class GameController extends Controller
 
         return response()->json($worstPlayer);
     }
-
+    // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
     public function getBestRankingPlayer()
     {
         $playersRanking = $this->CalculatePlayersRanking();
@@ -98,5 +98,36 @@ class GameController extends Controller
         return response()->json($bestPlayer);
 
     }
+/*Metodos del Jugador Individual----------- */
+    // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
+    public function throwDice($userId)
+    {
+        $player = User::find($userId);
 
+        if (!$player) {
+            return $this->sendError('Invalid user ID.');
+        }
+
+        $die1 = rand(1,6);
+        $die2 = rand(1,6);
+        $result = $die1 + $die2;
+        
+        $wasGameWon = ($result == 7); //El resultado (verdadero o falso) se guardara en $wasGameWon
+
+        $dataGame = [
+            'user_id' => $userId,
+            'die1_value'=>$die1,
+            'die2_value'=>$die2,
+            'was_game_won'=>$wasGameWon
+        ];
+        
+        $game = Game::create($dataGame);
+
+        $game->save();
+
+        $dataGame = array_merge(["nickname" => $player->nickname], $dataGame);//agrega el nickname del jugador en la primera posicion para mostrar con los demas datos
+        
+        return response()->json($dataGame);
+
+    }
 }
