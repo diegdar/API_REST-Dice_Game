@@ -16,20 +16,22 @@ use Illuminate\Http\Request;
     Si el porcentaje de victorias de ambos elementos es igual, la función devuelve un valor igual a 0.
     usort:
     La función usort ordena el array $averageGamesWon utilizando la función de comparación $cmp. La función ordena el array de mayor a menor, colocando a los jugadores con mayor porcentaje de victorias al principio del array.
+2: El array original se modifica y se ordena en la misma variable $averageGamesWon. No se crea un nuevo array para almacenar el resultado ordenado.
+
 
 
 */
+
 class GameController extends Controller
 {
-    private $averageGamesWon;
     // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
     private function CalculateAverageGamesWon()
     {
-        // Carga eager de las partidas para cada usuario.
+        // Devuelve todas las partidas.
         $players = User::with('games')->get();
 
         // Mapeo de la colección de usuarios a una lista de datos.
-        $this->averageGamesWon = $players->map(function ($user) {
+        return  $players->map(function ($user) {
             // Cuenta el número total de partidas del usuario.
             $totalGames = $user->games->count();
 
@@ -49,34 +51,44 @@ class GameController extends Controller
 
     public function getPlayersGames(): JsonResponse
     {
-        $this->CalculateAverageGamesWon();
-        $averageGamesWon = $this->getAverageGamesWon();
+        $averageGamesWon = $this->CalculateAverageGamesWon();
         // Devuelve una respuesta JSON con la lista de jugadores y sus porcentajes de victorias.
         return response()->json($averageGamesWon->toArray());
     }
 
-    //GET /players/ranking => Devuelve un ranking de los resultados de todos los jugadores: mostrar los porcentajes de partidas ganadas de mayor a menor.
-    public function getPlayersRanking()
+    // Calcula un ranking de los resultados de todos los jugadores
+    public function CalculatePlayersRanking()
     {
-        $this->CalculateAverageGamesWon();
-        $averageGamesWon = $this->getAverageGamesWon()->toArray();
+        $averageGamesWon = $this->CalculateAverageGamesWon()->toArray();
 
         // Función de comparación para ordenar por porcentaje de victorias (de mayor a menor)
         $cmp = function ($a, $b) {/*nota 1*/
             return $b['win_rate'] <=> $a['win_rate'];
         };
+
         // Ordena el array de jugadores usando la función de comparación
         usort($averageGamesWon, $cmp);/*nota 1*/
 
-        // Devuelve la respuesta JSON con los datos ordenados
-        return response()->json($averageGamesWon);
+        return $averageGamesWon;/*nota 2*/
     }
 
-    /**
-     * Get the value of averageGamesWon
-     */
-    public function getAverageGamesWon()
+    //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
+    public function getPlayersRanking()
     {
-        return $this->averageGamesWon;
+        $playersRanking = $this->CalculatePlayersRanking();
+
+        return response()->json($playersRanking);
     }
+
+    public function getWorstPlayerRanking()
+    {
+        $playersRanking = $this->CalculatePlayersRanking();
+
+        $worstPlayer = $playersRanking[count($playersRanking) - 1];//toma el ultimo valor listado del array para obtener el peor del ranking
+
+        return response()->json($worstPlayer);
+    }
+
+
+
 }
