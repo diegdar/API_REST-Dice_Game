@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Game extends Model
 {
@@ -19,9 +19,9 @@ class Game extends Model
 
     public $timestamps = false;//impide que se cree por defecto los campos timestamps    
 
-    public function users():HasMany//El nombre de la función está en plural porque estamos haciendo referencia a muchas partes (usuarios)
+    public function user():BelongsTo//El nombre de la función está en plural porque estamos haciendo referencia a muchas partes (usuarios)
     {
-        return $this->hasMany(User::class);//Aquí establecemos la relación: $this(Game) puede tener muchos User(usuarios)-(aquí tenemos que poner el nombre de la Clase en singular).
+        return $this->belongsTo(User::class);//Aquí establecemos la relación: $this(Game) solo puede pertenecer a un usuario(jugador)
     }
 
 }

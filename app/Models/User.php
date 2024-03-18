@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -45,9 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function game(): BelongsTo
+    public function games(): HasMany
     {
-        return $this->belongsTo(Game::class);//Aquí establecemos la relación: $this(User) solo puede pertenecer a una partida(Game)
+        return $this->hasMany(Game::class);//Aquí establecemos la relación: $this(User) tiene uno o muchas partidas
     }
 
 }
