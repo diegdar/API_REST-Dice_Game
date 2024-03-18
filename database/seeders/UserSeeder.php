@@ -16,27 +16,56 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
+
+        $adminsUser = [
             [
-                'nickname' => "lolo",
-                'email' => "lolo@gmail.com",
+                'nickname' => "admin1",
+                'email' => "admin1@gmail.com",
                 'password' => "1234",
             ],
             [
-                'nickname' => "ricky",
-                'email' => "ricky@gmail.com",
+                'nickname' => "admin2",
+                'email' => "admin2@gmail.com",
+                'password' => "1234",
+            ]
+        ];
+
+        foreach ($adminsUser as $adminUser) {
+            $adminUser['password'] = Hash::make($adminUser['password']); // Encripta las passwords antes de guardarlas en la BBDD
+            User::create($adminUser)->assignRole('Admin'); //crea el usuario en la BBDD y les asigna el Role de administrador
+        }
+
+        $playersUser = [
+            [
+                'nickname' => "player1",
+                'email' => "player1@gmail.com",
                 'password' => "1234",
             ],
             [
-                'nickname' => "ana",
-                'email' => "ana@gmail.com",
+                'nickname' => "playe2",
+                'email' => "player2@gmail.com",
+                'password' => "1234",
+            ],
+            [
+                'nickname' => "player3",
+                'email' => "player3@gmail.com",
+                'password' => "1234",
+            ],
+            [
+                'nickname' => "player4",
+                'email' => "player4@gmail.com",
+                'password' => "1234",
+            ],
+            [
+                'nickname' => "player5",
+                'email' => "player5@gmail.com",
                 'password' => "1234",
             ],
         ];
 
-        foreach ($users as $user) {
-            $user['password'] = Hash::make($user['password']); // Encripta las passwords antes de guardarlas en la BBDD
-            User::create($user);
+        foreach ($playersUser as $player) {
+            $player['password'] = Hash::make($player['password']); // Encripta las passwords antes de guardarlas en la BBDD
+            User::create($player);
         }
     }
 }
