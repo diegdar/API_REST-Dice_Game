@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
 
         foreach ($playersUser as $player) {
             $player['password'] = Hash::make($player['password']); // Encripta las passwords antes de guardarlas en la BBDD
-            User::create($player);
+            User::create($player)->assignRole('Player');
         }
     }
 }
