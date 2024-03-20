@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('nickname', 50)->default('Anonimo')->nullable();
+            $table->string('nickname', 50)->default('anonimo')->nullable();
             $table->string('email')->unique();
             $table->timestamp('created_at');
             $table->string('password');
