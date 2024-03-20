@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -16,7 +17,12 @@ class RegisterController extends Controller
     {
         // Validar los datos recibidos en la solicitud
         $validator = Validator::make($request->all(), [
-            'nickname' => 'nullable|unique:users',
+            'nickname' => [
+                'nullable',
+                Rule::unique('users', 'nickname')->where(function ($query) {
+                    $query->where('nickname', '<>', 'anonimo');
+                }),//Solo permite repetir el nickname 'anonimo'
+            ],
             'email' => 'required|email|unique:users',
             'password' => 'required'
         ]);
@@ -34,7 +40,7 @@ class RegisterController extends Controller
         $user = User::create($input);
         // Generar un token de acceso para el usuario recién registrado
         $success['token'] = $user->createToken('MyApp')->accessToken;
-        $success['nickname'] = $user->name;
+        $success['nickname'] = $user->nickname;
 
         // Retornar una respuesta exitosa con el token y el nombre del usuario
         return $this->sendResponse($success, 'User registered successfully.');
@@ -48,11 +54,12 @@ class RegisterController extends Controller
             $user = Auth::user();
             // Generar un token de acceso para el usuario autenticado
             $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['nickname'] = $user->name;
+            $success['nickname'] = $user->nickname;
             // Retornar una respuesta exitosa con el token y el nombre del usuario
             return $this->sendResponse($success, 'User login successfully. ');
         } else {
             // Si la autenticación falla, retornar un error de no autorizado
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
         }
-    }}
+    }
+}

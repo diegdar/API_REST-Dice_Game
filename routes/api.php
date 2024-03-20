@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\GameController;
 use App\Http\Controllers\API\RegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,18 @@ use Illuminate\Support\Facades\Route;
 Route::post('register',[RegisterController::class, 'register']);
 Route::post('login',[RegisterController::class, 'login']);
 
+// Jugadores
+Route::middleware(['auth:api','player'])->group(function(){
+    Route::post('/players/{id}/games', [GameController::class, 'throwDice']);
+    Route::delete('/players/{id}/games', [GameController::class, 'deletePlayerGames']);
+    Route::get('/players/{id}/games', [GameController::class, 'getGamesPlayer']);
+});
+
+// Administrador
+Route::middleware(['auth:api','admin'])->group(function(){
+    Route::get('/players', [GameController::class, 'getPlayersGames']);
+    Route::get('/players/ranking', [GameController::class, 'getPlayersRanking']);
+    Route::get('/players/ranking/loser', [GameController::class, 'getWorstRankingPlayer']);
+    Route::get('/players/ranking/winner ', [GameController::class, 'getBestRankingPlayer']);
+});
 
