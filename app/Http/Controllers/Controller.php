@@ -22,7 +22,7 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError($error, $errorMessages = [], $code = 422)
     {
         // Crea un arreglo con los datos de la respuesta de error
         $response = [

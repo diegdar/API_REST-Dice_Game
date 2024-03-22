@@ -18,7 +18,6 @@ class RegisterController extends Controller
         // Validar los datos recibidos en la solicitud
         $validator = Validator::make($request->all(), [
             'nickname' => [
-                'nullable',
                 Rule::unique('users', 'nickname')->where(function ($query) {
                     $query->where('nickname', '<>', 'anonimo');
                 }),//Solo permite repetir el nickname 'anonimo'
@@ -31,7 +30,9 @@ class RegisterController extends Controller
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
-
+        if (empty($request->nickname)) {//si el valor del nickname esta vacio lo guadara como anonimo
+            $request->merge(['nickname' => 'anonimo']);
+        }
         // Obtener todos los datos de la solicitud
         $input = $request->all();
         // Encriptar la contraseña antes de almacenarla en la base de datos
