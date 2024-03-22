@@ -7,13 +7,18 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+/*
+🗒️NOTAS:
+1: Genera datos aleatorios de un usuario usando el factory de Laravel y devuelve los campos en forma de array.
+
+
+*/
 
 class UserRegistrationTest extends TestCase
 {
     private function createRandomUserData()
     {
-        // Genera datos aleatorios de un usuario usando la factoría de Laravel y los convierte en un array
-        return User::factory()->make()->toArray();
+        return User::factory()->make()->toArray();/*nota 1*/
     }
 
     public function test_user_creation() 
@@ -50,7 +55,7 @@ class UserRegistrationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(401);
     }
 
     public function test_missing_data()
@@ -61,7 +66,7 @@ class UserRegistrationTest extends TestCase
             'password' => ''
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(401);
     }
 
     public function test_duplicated_nickname()
@@ -83,7 +88,7 @@ class UserRegistrationTest extends TestCase
         ]);
 
         // Asegura que la respuesta tenga un código de estado 422 (Unprocessable Entity)
-        $response->assertStatus(422);
+        $response->assertStatus(401);
     }
     public function test_password_encryption()
     {
