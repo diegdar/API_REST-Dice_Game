@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('die1_value');
             $table->integer('die2_value');
             $table->boolean('was_game_won')->default(false);
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); //Cuado se elimine un jugador se borrara todas sus jugadas
         });
     }
 
