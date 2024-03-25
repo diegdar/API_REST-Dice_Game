@@ -10,8 +10,7 @@ use Tests\TestCase;
 /*
 🗒️NOTAS:
 1: Crea un usuario de prueba con el rol "jugador"
-2: Envía la solicitud DELETE sin crear partidas (no es necesario para esta prueba)
-3: podemos controlar si se crean o no partidas en la función, dependiendo de la prueba que se ejecuta. Esto evita la necesidad de duplicar código para las dos pruebas con diferentes configuraciones.
+2: podemos controlar si se crean o no partidas en la función, dependiendo de la prueba que se ejecuta. Esto evita la necesidad de duplicar código para las dos pruebas con diferentes configuraciones.
 */
 class deletePlayerGamesTest extends TestCase
 {
@@ -28,7 +27,7 @@ class deletePlayerGamesTest extends TestCase
         
     }
 
-    private function sendDeleteRequest($testUser, $createGames = false/*nota 3*/)
+    private function sendDeleteRequest($testUser, $createGames = false/*nota 2*/)
     {
         $token = $testUser->createToken('test user token')->accessToken;
 
@@ -69,10 +68,8 @@ class deletePlayerGamesTest extends TestCase
         $response = $this->sendDeleteRequest($testUser);//Envía la solicitud DELETE sin crear partidas (no es necesario para esta prueba)
 
         // Afirmaciones sobre la respuesta:
-        // - Código de estado 404 (No encontrado)
-        $response->assertStatus(404);
-        // - Mensaje de error en la respuesta JSON
-        $response->assertJson([
+        $response->assertStatus(404);//(No encontrado)        
+        $response->assertJson([//Mensaje de error en la respuesta JSON
             'error' => 'Player has no games to delete!',
         ]);
     }
