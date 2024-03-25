@@ -37,7 +37,7 @@ class getGamesPlayerTest extends TestCase
             Game::factory()->count(3)->create(['user_id' => $testUser->id]);
         }
 
-        // Envía la solicitud DELETE a la API
+        // Envía la solicitud de obtener partidas del jugador a la API
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
@@ -48,7 +48,7 @@ class getGamesPlayerTest extends TestCase
 
     }
 
-    public function test_getGamesPlayerTest_successful()
+    public function test_getGamesPlayer_successful()
     {
         $testUser = $this->createRandomUserData();/*nota 1*/
         $response = $this->getGamesCollection($testUser, true);// Envía la solicitud 'obtener partidas del jugador' y crea partidas antes de la solicitud 
@@ -79,7 +79,7 @@ class getGamesPlayerTest extends TestCase
         ]);
     }
 
-    public function test_getGamesPlayerTest_denied_for_admin_Role()
+    public function test_getGamesPlayer_denied_for_admin_Role()
     {
         $testUser = $this->createRandomUserData('Admin');
         // creacion token del usuario
@@ -93,7 +93,7 @@ class getGamesPlayerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_getGamesPlayerTest_denied_without_token()
+    public function test_getGamesPlayer_denied_without_token()
     {
         $testUser = $this->createRandomUserData();
 
