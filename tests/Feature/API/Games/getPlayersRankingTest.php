@@ -8,13 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-/*
-🗒️NOTAS:
-1: Crea un usuario de prueba con el rol "jugador"
-
-*/
-
-class getPlayersGamesTest extends TestCase
+class getPlayersRankingTest extends TestCase
 {
     private function createRandomUserData($role = 'Player')
     {/*nota 1*/
@@ -46,7 +40,8 @@ class getPlayersGamesTest extends TestCase
         $this->createPlayerGames($user3);
 
     }
-    public function test_getPlayersGames_successful()
+
+    public function test_getPlayersRanking_successful()
     {
         $this->createPlayersData();
 
@@ -58,7 +53,7 @@ class getPlayersGamesTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->getJson("api/players");
+        ])->getJson("api/players/ranking");
 
         // Afirmaciones sobre la respuesta:
         $response->assertStatus(200);
@@ -70,14 +65,14 @@ class getPlayersGamesTest extends TestCase
         ]);
     }
 
-    public function test_getPlayersGames_denied_for_player_role()
+    public function test_getPlayersRanking_denied_for_player_role()
     {
         $this->createPlayersData();
 
         $testAdmin = $this->createRandomUserData('Player');
         $token = $testAdmin->createToken('test user token')->accessToken;
 
-        // Envía la solicitud de obtener las medias de todos los jugadores
+        // Envía la solicitud para obtener las medias de todos los jugadores
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
@@ -87,7 +82,7 @@ class getPlayersGamesTest extends TestCase
         
     }
 
-    public function test_getPlayersGames_denied_without_token()
+    public function test_getPlayersRanking_denied_without_token()
     {
         $this->createPlayersData();
         $testAdmin = $this->createRandomUserData('Player');
@@ -98,5 +93,6 @@ class getPlayersGamesTest extends TestCase
 
     }
 
+    
 
 }

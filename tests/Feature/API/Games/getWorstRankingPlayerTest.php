@@ -6,15 +6,10 @@ use App\Models\Game;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Games\GameData; // Include the trait
 use Tests\TestCase;
 
-/*
-🗒️NOTAS:
-1: Crea un usuario de prueba con el rol "jugador"
-
-*/
-
-class getPlayersGamesTest extends TestCase
+class getWorstRankingPlayerTest extends TestCase
 {
     private function createRandomUserData($role = 'Player')
     {/*nota 1*/
@@ -28,28 +23,8 @@ class getPlayersGamesTest extends TestCase
         ])->assignRole($role);
     }
 
-
-    private function createPlayerGames($testUser)
+    public function test_getWorstRankingPlayerTest_successful()
     {
-        // Crea 3 partidas para el usuario si se indica (solo para la prueba de eliminación exitosa)
-        return Game::factory()->count(3)->create(['user_id' => $testUser->id]);
-    }
-
-    private function createPlayersData()
-    {
-        $user1 = $this->createRandomUserData();
-        $user2 = $this->createRandomUserData();
-        $user3 = $this->createRandomUserData();
-
-        $this->createPlayerGames($user1);
-        $this->createPlayerGames($user2);
-        $this->createPlayerGames($user3);
-
-    }
-    public function test_getPlayersGames_successful()
-    {
-        $this->createPlayersData();
-
         $testAdmin = $this->createRandomUserData('Admin');
 
         $token = $testAdmin->createToken('test user token')->accessToken;
@@ -58,26 +33,24 @@ class getPlayersGamesTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->getJson("api/players");
+        ])->getJson("api/players/ranking/loser");
 
         // Afirmaciones sobre la respuesta:
         $response->assertStatus(200);
-        $response->assertJsonStructure([
+        $response->assertJsonStructure(
             [
                 'NickName',
                 'win_rate'
             ],
-        ]);
+        );
     }
 
-    public function test_getPlayersGames_denied_for_player_role()
+    public function test_getWorstRankingPlayerTest_denied_for_player_role()
     {
-        $this->createPlayersData();
-
         $testAdmin = $this->createRandomUserData('Player');
         $token = $testAdmin->createToken('test user token')->accessToken;
 
-        // Envía la solicitud de obtener las medias de todos los jugadores
+        // Envía la solicitud para obtener las medias de todos los jugadores
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
@@ -87,16 +60,12 @@ class getPlayersGamesTest extends TestCase
         
     }
 
-    public function test_getPlayersGames_denied_without_token()
+    public function test_getWorstRankingPlayerTest_denied_without_token()
     {
-        $this->createPlayersData();
         $testAdmin = $this->createRandomUserData('Player');
 
         $response = $this->getJson("api/players");
-
         $response->assertStatus(401);
-
     }
-
 
 }
