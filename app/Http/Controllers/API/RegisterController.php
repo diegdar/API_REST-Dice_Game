@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -18,10 +19,9 @@ class RegisterController extends Controller
         // Validar los datos recibidos en la solicitud
         $validator = Validator::make($request->all(), [
             'nickname' => [
-                'nullable',
                 Rule::unique('users', 'nickname')->where(function ($query) {
                     $query->where('nickname', '<>', 'anonimo');
-                }),//Solo permite repetir el nickname 'anonimo'
+                }), //Solo permite repetir el nickname 'anonimo'
             ],
             'email' => 'required|email|unique:users',
             'password' => 'required'
@@ -31,7 +31,9 @@ class RegisterController extends Controller
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
-
+        if (empty($request->nickname)) { //si el valor del nickname esta vacio lo guadara como anonimo
+            $request->merge(['nickname' => 'anonimo']);
+        }
         // Obtener todos los datos de la solicitud
         $input = $request->all();
         // Encriptar la contraseña antes de almacenarla en la base de datos
@@ -48,18 +50,24 @@ class RegisterController extends Controller
 
     public function login(Request $request): JsonResponse
     {
-        // Intentar autenticar al usuario con el email y la contraseña proporcionados
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Obtener el usuario autenticado
-            $user = Auth::user();
-            // Generar un token de acceso para el usuario autenticado
-            $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['nickname'] = $user->nickname;
-            // Retornar una respuesta exitosa con el token y el nombre del usuario
-            return $this->sendResponse($success, 'User login successfully. ');
-        } else {
-            // Si la autenticación falla, retornar un error de no autorizado
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+        // Obtener el usuario con el email proporcionado
+        $user = User::where('email', $request->email)->first();
+
+        // Si el usuario no existe, retornar un error
+        if (!$user) {
+            return $this->sendError('User not found.', ['error' => 'User not found']);
         }
+
+        // Si la contraseña no coincide, retornar un error
+        if (!Hash::check($request->password, $user->password)) {
+            return $this->sendError('Incorrect password.', ['error' => 'Incorrect password']);
+        }
+
+        // Generar un token de acceso para el usuario autenticado
+        $success['token'] = $user->createToken('MyApp')->accessToken;
+        $success['nickname'] = $user->nickname;
+
+        // Retornar una respuesta exitosa con el token y el nombre del usuario
+        return $this->sendResponse($success, 'User login successfully. ');
     }
 }

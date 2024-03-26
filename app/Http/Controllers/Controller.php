@@ -22,7 +22,7 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError($error, $errorMessages = [])
     {
         // Crea un arreglo con los datos de la respuesta de error
         $response = [
@@ -34,6 +34,6 @@ class Controller extends BaseController
             $response['data'] = $errorMessages;
         }
         // Retorna una respuesta en formato JSON con el código de estado especificado
-        return response()->json($response, $code);
+        return response()->json($response, 401);
     }
 }
