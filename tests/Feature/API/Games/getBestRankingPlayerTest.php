@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\API\Games;
 
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\Games\GameData; // Include the trait
 use Tests\TestCase;
 
-class getWorstRankingPlayerTest extends TestCase
+class GetBestRankingPlayerTest extends TestCase
 {
-    private function createRandomUserData($role = 'Player')
-    {/*nota 1*/
+
+    public function createRandomUserData($role = 'Player')
+    {
         $userData = User::factory()->make();
 
         // Crea un usuario con los datos aleatorios
@@ -23,8 +23,9 @@ class getWorstRankingPlayerTest extends TestCase
         ])->assignRole($role);
     }
 
-    public function test_getWorstRankingPlayer_successful()
+    public function test_getBestRankingPlayer_successful()
     {
+        // Access methods directly from the trait:
         $testAdmin = $this->createRandomUserData('Admin');
 
         $token = $testAdmin->createToken('test user token')->accessToken;
@@ -33,7 +34,7 @@ class getWorstRankingPlayerTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->getJson("api/players/ranking/loser");
+        ])->getJson("api/players/ranking/winner");
 
         // Afirmaciones sobre la respuesta:
         $response->assertStatus(200);
@@ -45,7 +46,7 @@ class getWorstRankingPlayerTest extends TestCase
         );
     }
 
-    public function test_getWorstRankingPlayer_denied_for_player_role()
+    public function test_getBestRankingPlayer_denied_for_player_role()
     {
         $testAdmin = $this->createRandomUserData('Player');
         $token = $testAdmin->createToken('test user token')->accessToken;
@@ -54,17 +55,17 @@ class getWorstRankingPlayerTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Accept' => 'application/json',
-        ])->getJson("api/players/ranking/loser");
+        ])->getJson("api/players/ranking/winner");
 
         $response->assertStatus(403);
         
     }
 
-    public function test_getWorstRankingPlayer_denied_without_token()
+    public function test_getBestRankingPlayer_denied_without_token()
     {
         $testAdmin = $this->createRandomUserData('Player');
 
-        $response = $this->getJson("api/players/ranking/loser");
+        $response = $this->getJson("api/players/ranking/winner");
         $response->assertStatus(401);
     }
 

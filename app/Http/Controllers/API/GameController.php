@@ -108,7 +108,7 @@ class GameController extends Controller
                 'win_rate' => $winRate,
             ];
         });
-    }
+    }    
 
     // GET /players : devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos.
     public function getPlayersGames(): JsonResponse
@@ -132,6 +132,7 @@ class GameController extends Controller
 
         return $averageGamesWon;/*nota 2*/
     }
+
 
     //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
     public function getPlayersRanking()
