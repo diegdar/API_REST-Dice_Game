@@ -39,7 +39,7 @@ class RegisterController extends Controller
         // Encriptar la contraseña antes de almacenarla en la base de datos
         $input['password'] = bcrypt($input['password']);
         // Crear un nuevo usuario con los datos proporcionados
-        $user = User::create($input);
+        $user = User::create($input)->assignRole('Player');
         // Generar un token de acceso para el usuario recién registrado
         $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['nickname'] = $user->nickname;
