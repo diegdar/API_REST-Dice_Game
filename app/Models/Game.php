@@ -13,7 +13,7 @@ class Game extends Model
     protected $fillable = [//asignacion masiva para que solo permita crear valores por estos campos
         'die1_value',
         'die2_value',
-        'was_game_won',
+        'won',
         'user_id'        
     ];
 

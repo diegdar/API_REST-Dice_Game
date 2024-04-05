@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\GamePlayerResource;
-use App\Models\Game;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use App\Models\User;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UserController extends Controller
+class PlayerController extends Controller
 {
     // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
     public function throwDice(int $userId):JsonResponse

@@ -46,7 +46,7 @@ class ThrowDiceTest extends TestCase
             'user_id',
             'die1_value',
             'die2_value',
-            'was_game_won',
+            'won',
         ]);
 
         $this->assertDatabaseHas('games', [ //Comprueba que exista el user_id en games

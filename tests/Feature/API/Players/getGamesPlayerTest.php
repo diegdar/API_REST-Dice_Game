@@ -61,7 +61,7 @@ class getGamesPlayerTest extends TestCase
                     'Game Nº',
                     'die1_value',
                     'die2_value',
-                    'was_game_won',
+                    'won',
                 ],
             ],
         ]);

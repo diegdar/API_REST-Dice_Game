@@ -14,12 +14,12 @@ class GamePlayerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $wasGameWon = ($this->was_game_won==1); 
+        $wasGameWon = ($this->won==1); 
         return [
             'Game Nº' => $this->id,
             'die1_value' => $this->die1_value,
             'die2_value' => $this->die2_value,
-            'was_game_won' => $wasGameWon,
+            'won' => $wasGameWon,
         ];
     }
 }

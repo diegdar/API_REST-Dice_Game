@@ -32,7 +32,7 @@ class GameController extends Controller
             $totalGames = $user->games->count();
 
             // Cuenta el número de partidas ganadas por el usuario.
-            $gamesWon = $user->games->where('was_game_won', true)->count();
+            $gamesWon = $user->games->where('won', true)->count();
 
             // Cálculo del porcentaje de victorias y evita dividir por 0 si el jugador aun no ha jugado.
             $winRate = $totalGames > 0 ? round(($gamesWon / $totalGames) * 100, 2) . '%' : 'No hay partidas jugadas';
