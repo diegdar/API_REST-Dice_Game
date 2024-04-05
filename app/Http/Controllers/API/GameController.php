@@ -3,14 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserValidation;
-use App\Http\Resources\GamePlayerResource;
-use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 /*
 🗒️NOTAS:
@@ -76,7 +70,7 @@ class GameController extends Controller
 
 
     //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
-    public function getPlayersRanking()
+    public function getPlayersRanking():JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
@@ -84,7 +78,7 @@ class GameController extends Controller
     }
 
     // GET /players/ranking/loser: Devuelve el jugador con el peor porcentaje de exito de todos.
-    public function getWorstRankingPlayer()
+    public function getWorstRankingPlayer():JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
@@ -94,7 +88,7 @@ class GameController extends Controller
     }
 
     // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
-    public function getBestRankingPlayer()
+    public function getBestRankingPlayer():JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 

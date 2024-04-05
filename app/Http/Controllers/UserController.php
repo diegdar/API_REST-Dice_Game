@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\GamePlayerResource;
 use App\Models\Game;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    /*Metodos del Jugador Individual----------- */
     // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
-    public function throwDice($userId)
+    public function throwDice(int $userId):JsonResponse
     {
         $player = User::find($userId);
 
@@ -41,7 +41,7 @@ class UserController extends Controller
         return response()->json($dataGame);
     }
 
-    public function editNickname(Request $request, $userId)
+    public function editNickname(Request $request, int $userId):JsonResponse
     {
         $validatedData = Validator::make($request->all(), [
             'nickname' => 'required|string|min:3|max:30|unique:users',
@@ -67,7 +67,7 @@ class UserController extends Controller
     }
 
     // DELETE /players/{id}/games : Un jugador borra el listado de todas sus tiradas de dados
-    public function deletePlayerGames($userId)
+    public function deletePlayerGames(int $userId):JsonResponse
     {
         // Comprueba si el jugador tiene partidas jugadas
         $gamesCount = Game::where('user_id', $userId)->count();
@@ -83,7 +83,7 @@ class UserController extends Controller
     }
 
     // GET /players/{id}/games : devuelve el listado de jugadas de un jugador/a
-    public function getGamesPlayer($userId)
+    public function getGamesPlayer(int $userId):JsonResponse
     {   //Se obtienen la colección de objetos Game del jugador
         $gamesPlayer = Game::where('user_id', $userId)->get();
 
