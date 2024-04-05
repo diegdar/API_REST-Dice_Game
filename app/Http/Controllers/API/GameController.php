@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserValidation;
 use App\Http\Resources\GamePlayerResource;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 /*
 🗒️NOTAS:
 1: La función de comparación $cmp, toma dos elementos del array $averageGamesWon como argumentos ($a y $b). La función compara los valores de la clave win_rate de ambos elementos.
@@ -22,7 +26,7 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-/*Metodos del Jugador Individual----------- */
+    /*Metodos del Jugador Individual----------- */
     // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
     public function throwDice($userId)
     {
@@ -53,6 +57,31 @@ class GameController extends Controller
         return response()->json($dataGame);
     }
 
+    public function editNickname(Request $request, $userId)
+    {
+        $validatedData = Validator::make($request->all(), [
+            'nickname' => 'required|string|min:3|max:30|unique:users',
+        ], [
+            'nickname.required' => 'El nickname es obligatorio.',
+            'nickname.string' => 'El nickname debe ser una cadena de texto.',
+            'nickname.min' => 'El nickname debe tener al menos :min caracteres.',
+            'nickname.max' => 'El nickname no puede tener más de :max caracteres.',
+            'nickname.unique' => 'El nickname ya está en uso por otro usuario.',
+        ]);
+
+        // Si la validación falla, se retorna un error con los detalles
+        if ($validatedData->fails()) {
+            return $this->sendError('Validation Error.', $validatedData->errors());
+        }
+
+        $user = User::find($userId);
+        $user->update([
+            'nickname' => $request->nickname,
+        ]);
+
+        return response()->json(['message' => 'El usuario ha sido actualizado al nickname: ' . $request->nickname]);
+    }
+
     // DELETE /players/{id}/games : Un jugador borra el listado de todas sus tiradas de dados
     public function deletePlayerGames($userId)
     {
@@ -73,7 +102,7 @@ class GameController extends Controller
     public function getGamesPlayer($userId)
     {   //Se obtienen la colección de objetos Game del jugador
         $gamesPlayer = Game::where('user_id', $userId)->get();
-        
+
         // Comprueba si el jugador tiene partidas jugadas
         if ($gamesPlayer->count() === 0) {
             // Devuelve un error si el jugador no tiene partidas jugadas
@@ -84,7 +113,7 @@ class GameController extends Controller
 
     }
 
-/* Metodos colectivos -------------*/
+    /* Metodos colectivos -------------*/
     // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
     private function CalculateAverageGamesWon()
     {
@@ -108,7 +137,7 @@ class GameController extends Controller
                 'win_rate' => $winRate,
             ];
         });
-    }    
+    }
 
     // GET /players : devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos.
     public function getPlayersGames(): JsonResponse
@@ -151,7 +180,7 @@ class GameController extends Controller
 
         return response()->json($worstPlayer);
     }
-    
+
     // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
     public function getBestRankingPlayer()
     {

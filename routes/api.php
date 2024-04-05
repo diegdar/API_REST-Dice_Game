@@ -26,6 +26,7 @@ Route::post('login',[RegisterController::class, 'login']);
 // Jugadores
 Route::middleware(['auth:api','player'])->group(function(){
     Route::post('/players/{id}/games', [GameController::class, 'throwDice']);
+    Route::put('/players/{id}', [GameController::class, 'editNickname']);
     Route::delete('/players/{id}/games', [GameController::class, 'deletePlayerGames']);
     Route::get('/players/{id}/games', [GameController::class, 'getGamesPlayer']);
 });
