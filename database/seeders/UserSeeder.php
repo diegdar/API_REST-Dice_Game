@@ -21,12 +21,12 @@ class UserSeeder extends Seeder
             [
                 'nickname' => "admin1",
                 'email' => "admin1@gmail.com",
-                'password' => "1234",
+                'password' => "r1B89$89",
             ],
             [
                 'nickname' => "admin2",
                 'email' => "admin2@gmail.com",
-                'password' => "1234",
+                'password' => "r1B89$88",
             ]
         ];
 
@@ -39,27 +39,27 @@ class UserSeeder extends Seeder
             [
                 'nickname' => "player1",
                 'email' => "player1@gmail.com",
-                'password' => "1234",
+                'password' => "%C123456a1",
             ],
             [
                 'nickname' => "playe2",
                 'email' => "player2@gmail.com",
-                'password' => "1234",
+                'password' => "%C123456a2",
             ],
             [
                 'nickname' => "player3",
                 'email' => "player3@gmail.com",
-                'password' => "1234",
+                'password' => "%C123456a3",
             ],
             [
                 'nickname' => "player4",
                 'email' => "player4@gmail.com",
-                'password' => "1234",
+                'password' => "%C123456a4",
             ],
             [
                 'nickname' => "player5",
                 'email' => "player5@gmail.com",
-                'password' => "1234",
+                'password' => "%C123456a5",
             ],
         ];
 

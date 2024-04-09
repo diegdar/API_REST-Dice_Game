@@ -58,10 +58,10 @@ class getGamesPlayerTest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 [
-                    'Game Nº',
-                    'die1_value',
-                    'die2_value',
-                    'was_game_won',
+                    'game_number',
+                    'dice1_value',
+                    'dice2_value',
+                    'won',
                 ],
             ],
         ]);

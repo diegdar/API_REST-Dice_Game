@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 */
 
-class getPlayersGamesTest extends TestCase
+class getListGamesTest extends TestCase
 {
     private function createRandomUserData($role = 'Player')
     {/*nota 1*/
@@ -46,7 +46,7 @@ class getPlayersGamesTest extends TestCase
         $this->createPlayerGames($user3);
 
     }
-    public function test_getPlayersGames_successful()
+    public function test_getListGames_successful()
     {
         $this->createPlayersData();
 
@@ -70,7 +70,7 @@ class getPlayersGamesTest extends TestCase
         ]);
     }
 
-    public function test_getPlayersGames_denied_for_player_role()
+    public function test_getListGames_denied_for_player_role()
     {
         $this->createPlayersData();
 
@@ -87,7 +87,7 @@ class getPlayersGamesTest extends TestCase
         
     }
 
-    public function test_getPlayersGames_denied_without_token()
+    public function test_getListGames_denied_without_token()
     {
         $this->createPlayersData();
         $testAdmin = $this->createRandomUserData('Player');

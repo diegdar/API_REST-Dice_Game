@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->integer('die1_value');
-            $table->integer('die2_value');
-            $table->boolean('was_game_won')->default(false);
+            $table->integer('dice1_value');
+            $table->integer('dice2_value');
+            $table->boolean('won')->default(false);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); //Cuado se elimine un jugador se borrara todas sus jugadas
         });
     }

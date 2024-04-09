@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\GamePlayerResource;
-use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+
 /*
 🗒️NOTAS:
 1: La función de comparación $cmp, toma dos elementos del array $averageGamesWon como argumentos ($a y $b). La función compara los valores de la clave win_rate de ambos elementos.
@@ -22,69 +20,6 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-/*Metodos del Jugador Individual----------- */
-    // POST /players/{id}/games/ : Un jugador tira los dados y muestra su resultado
-    public function throwDice($userId)
-    {
-        $player = User::find($userId);
-
-        if (!$player) {
-            // Devuelve un error si el jugador no existe
-            return response()->json(['error' => 'Player not found!'], 404);
-        }
-        $die1 = rand(1, 6);
-        $die2 = rand(1, 6);
-        $result = $die1 + $die2;
-
-        $wasGameWon = ($result == 7); //El resultado (verdadero o falso) se guardara en $wasGameWon
-
-        $dataGame = [
-            'user_id' => $userId,
-            'die1_value' => $die1,
-            'die2_value' => $die2,
-            'was_game_won' => $wasGameWon
-        ];
-
-        $game = Game::create($dataGame);
-        $game->save();
-
-        $dataGame = array_merge(["nickname" => $player->nickname], $dataGame); //agrega el nickname del jugador en la primera posicion para mostrar con los demas datos
-
-        return response()->json($dataGame);
-    }
-
-    // DELETE /players/{id}/games : Un jugador borra el listado de todas sus tiradas de dados
-    public function deletePlayerGames($userId)
-    {
-        // Comprueba si el jugador tiene partidas jugadas
-        $gamesCount = Game::where('user_id', $userId)->count();
-
-        if ($gamesCount === 0) {
-            // Devuelve un error si el jugador no tiene partidas jugadas
-            return response()->json(['error' => 'Player has no games to delete!'], 404);
-        }
-        // Borra todas las partidas jugadas
-        Game::where('user_id', $userId)->delete();
-
-        return response()->json(['message' => 'All games for user deleted successfully!']);
-    }
-
-    // GET /players/{id}/games : devuelve el listado de jugadas de un jugador/a
-    public function getGamesPlayer($userId)
-    {   //Se obtienen la colección de objetos Game del jugador
-        $gamesPlayer = Game::where('user_id', $userId)->get();
-        
-        // Comprueba si el jugador tiene partidas jugadas
-        if ($gamesPlayer->count() === 0) {
-            // Devuelve un error si el jugador no tiene partidas jugadas
-            return response()->json(['error' => 'Player has no games!'], 404);
-        }
-
-        return $this->sendResponse(GamePlayerResource::collection($gamesPlayer), 'Games Player'); //convierte la coleccion de objetos Game en un acoleccion de recursos GamePlayerResource
-
-    }
-
-/* Metodos colectivos -------------*/
     // GET /players => devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos
     private function CalculateAverageGamesWon()
     {
@@ -97,25 +32,35 @@ class GameController extends Controller
             $totalGames = $user->games->count();
 
             // Cuenta el número de partidas ganadas por el usuario.
-            $gamesWon = $user->games->where('was_game_won', true)->count();
+            $gamesWon = $user->games->where('won', true)->count();
 
             // Cálculo del porcentaje de victorias y evita dividir por 0 si el jugador aun no ha jugado.
             $winRate = $totalGames > 0 ? round(($gamesWon / $totalGames) * 100, 2) . '%' : 'No hay partidas jugadas';
 
-            // Devuelve un array con el nombre y el porcentaje de victorias del usuario.
             return [
-                'NickName' => $user->nickname,
+                'nickname' => $user->nickname,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
                 'win_rate' => $winRate,
             ];
         });
-    }    
+    }
 
     // GET /players : devuelve el listado de todos los jugadores/as del sistema con su porcentaje medio de éxitos.
-    public function getPlayersGames(): JsonResponse
+    public function getListGames(): JsonResponse
     {
         $averageGamesWon = $this->CalculateAverageGamesWon();
-        // Devuelve una respuesta JSON con la lista de jugadores y sus porcentajes de victorias.
-        return response()->json($averageGamesWon->toArray());
+
+        $playersGamesJson = $averageGamesWon->map(function ($player) {
+            return [
+                'nickname' => $player['nickname'],
+                'email' => $player['email'],
+                'created_at' => $player['created_at'],
+                'win_rate' => $player['win_rate'],
+            ];
+        });
+
+        return response()->json($playersGamesJson);
     }
 
     // Calcula un ranking de los resultados de todos los jugadores
@@ -130,12 +75,19 @@ class GameController extends Controller
         // Ordena el array de jugadores usando la función de comparación
         usort($averageGamesWon, $cmp);/*nota 1*/
 
-        return $averageGamesWon;/*nota 2*/
+        // return $averageGamesWon;/*nota 2*/
+
+        return array_map(function ($player) {
+            return [
+                'nickname' => $player['nickname'],
+                'win_rate' => $player['win_rate'],
+            ];
+        }, $averageGamesWon/*nota 2*/);
     }
 
 
     //GET /players/ranking => Muestra los porcentajes de partidas ganadas de mayor a menor.
-    public function getPlayersRanking()
+    public function getPlayersRanking(): JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
@@ -143,7 +95,7 @@ class GameController extends Controller
     }
 
     // GET /players/ranking/loser: Devuelve el jugador con el peor porcentaje de exito de todos.
-    public function getWorstRankingPlayer()
+    public function getWorstRankingPlayer(): JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 
@@ -151,9 +103,9 @@ class GameController extends Controller
 
         return response()->json($worstPlayer);
     }
-    
+
     // GET /players/ranking/winner : devuelve al jugador/a con mejor porcentaje de éxito
-    public function getBestRankingPlayer()
+    public function getBestRankingPlayer(): JsonResponse
     {
         $playersRanking = $this->CalculatePlayersRanking();
 

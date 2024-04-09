@@ -19,7 +19,7 @@ class GameFactory extends Factory
     {
         $die1Value = $this->faker->randomElement([1, 2, 3, 4, 5, 6]);
         $die2Value = $this->faker->randomElement([1, 2, 3, 4, 5, 6]);
-        $wasGameWon = ($die1Value + $die2Value) === 7; // Establece el valor del campo 'was_game_won' segun los valores obtenidos de die1 y die2
+        $wasGameWon = ($die1Value + $die2Value) === 7; // Establece el valor del campo 'won' segun los valores obtenidos de die1 y die2
 
         $playersIds = User::whereHas('roles', function ($query) {
             $query->where('name', 'Player');
@@ -28,9 +28,9 @@ class GameFactory extends Factory
         $randomPlayerId = $this->faker->randomElement($playersIds); //elige un id aleatorio de los players
 
         return [
-            'die1_value' => $die1Value,
-            'die2_value' => $die2Value,
-            'was_game_won' => $wasGameWon,
+            'dice1_value' => $die1Value,
+            'dice2_value' => $die2Value,
+            'won' => $wasGameWon,
             'user_id' =>$randomPlayerId //asignara el id's aleatorio
         ];   
     }

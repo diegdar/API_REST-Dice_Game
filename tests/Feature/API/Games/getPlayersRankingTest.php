@@ -59,7 +59,7 @@ class getPlayersRankingTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure([
             [
-                'NickName',
+                'nickname',
                 'win_rate'
             ],
         ]);

@@ -29,7 +29,7 @@ class UserRegistrationTest extends TestCase
         $response = $this->json('POST', 'api/register', [
             'nickname' => $userData['nickname'],
             'email' => $userData['email'],
-            'password' => 'password123',
+            'password' => 'P4sword%1234',
         ]);
 
         // Asegura que el código de estado de la respuesta sea 200 (satisfactorio)
@@ -52,7 +52,7 @@ class UserRegistrationTest extends TestCase
         $response = $this->json('POST', 'api/register', [
             'nickname' => $userData['nickname'],
             'email' => 'email',
-            'password' => 'password123',
+            'password' => 'P4sword%1234',
         ]);
 
         $response->assertStatus(401);
@@ -77,14 +77,14 @@ class UserRegistrationTest extends TestCase
         $existingUser = User::create([
             'nickname'=>$userData['nickname'],
             'email'=>$userData['email'],
-            'password'=>'password123',
+            'password'=>'P4sword%1234',
         ]);
 
         // Realiza una solicitud POST JSON al endpoint con los datos del usuario con el valor duplicado de nickname
         $response = $this->json('POST', 'api/register', [
             'nickname' => $existingUser->nickname,
             'email' => 'testEmail@test.com',
-            'password' => 'password123',
+            'password' => 'P4sword%1234',
         ]);
 
         // Asegura que la respuesta tenga un código de estado 422 (Unprocessable Entity)
@@ -98,14 +98,14 @@ class UserRegistrationTest extends TestCase
         $this->json('POST', 'api/register', [
             'nickname' => $userData['nickname'],
             'email' => $userData['email'],
-            'password' => 'password123',
+            'password' => 'P4sword%1234',
         ]);
 
         // Obtiene el usuario recién creado de la base de datos
         $user = User::where('email', $userData['email'])->first();
 
         // Verifica que la contraseña se haya encriptado correctamente y coincida con la contraseña original
-        $this->assertTrue(Hash::check('password123', $user->password));
+        $this->assertTrue(Hash::check('P4sword%1234', $user->password));
     }
 
     public function test_token_generation()
@@ -115,7 +115,7 @@ class UserRegistrationTest extends TestCase
         $response = $this->json('POST', 'api/register', [/*nota1 */
             'nickname' => $userData['nickname'],
             'email' => $userData['email'],
-            'password' => 'password123',
+            'password' => 'P4sword%1234',
         ]);
     
         // Comprueba que la respuesta tenga un código de estado 200 (éxito)
