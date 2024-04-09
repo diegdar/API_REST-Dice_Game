@@ -80,6 +80,7 @@ class RegisterController extends Controller
         }
 
         // Generar un token de acceso para el usuario autenticado
+        $success['user_id'] = $user->id;
         $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['nickname'] = $user->nickname;
 
