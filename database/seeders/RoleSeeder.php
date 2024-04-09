@@ -27,7 +27,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name'=>'getGamesPlayer'])->assignRole($rolePlayer);
 
         // Permisos Administrador
-        Permission::create(['name'=>'getPlayersGames'])->assignRole($roleAdmin);
+        Permission::create(['name'=>'getListGames'])->assignRole($roleAdmin);
         Permission::create(['name'=>'getPlayersRanking'])->assignRole($roleAdmin);
         Permission::create(['name'=>'getWorstRankingPlayer'])->assignRole($roleAdmin);
         Permission::create(['name'=>'getBestRankingPlayer'])->assignRole($roleAdmin);

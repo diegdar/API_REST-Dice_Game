@@ -34,7 +34,7 @@ Route::middleware(['auth:api','player'])->group(function(){
 
 // Administrador
 Route::middleware(['auth:api','admin'])->group(function(){
-    Route::get('/players', [GameController::class, 'getPlayersGames']);
+    Route::get('/players', [GameController::class, 'getListGames']);
     Route::get('/players/ranking', [GameController::class, 'getPlayersRanking']);
     Route::get('/players/ranking/loser', [GameController::class, 'getWorstRankingPlayer']);
     Route::get('/players/ranking/winner ', [GameController::class, 'getBestRankingPlayer']);
