@@ -44,8 +44,8 @@ class ThrowDiceTest extends TestCase
         $response->assertJsonStructure([ //Comprueba que haya una respuesta Json con la tirada de dados del usuario
             'nickname',
             'user_id',
-            'die1_value',
-            'die2_value',
+            'dice1_value',
+            'dice2_value',
             'won',
         ]);
 

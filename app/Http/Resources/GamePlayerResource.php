@@ -16,9 +16,9 @@ class GamePlayerResource extends JsonResource
     {
         $wasGameWon = ($this->won==1); 
         return [
-            'Game Nº' => $this->id,
-            'die1_value' => $this->die1_value,
-            'die2_value' => $this->die2_value,
+            'game_number' => $this->id,
+            'dice1_value' => $this->dice1_value,
+            'dice2_value' => $this->dice2_value,
             'won' => $wasGameWon,
         ];
     }

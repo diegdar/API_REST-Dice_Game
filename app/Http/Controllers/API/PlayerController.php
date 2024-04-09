@@ -29,8 +29,8 @@ class PlayerController extends Controller
 
         $dataGame = [
             'user_id' => $userId,
-            'die1_value' => $die1,
-            'die2_value' => $die2,
+            'dice1_value' => $die1,
+            'dice2_value' => $die2,
             'won' => $wasGameWon
         ];
 

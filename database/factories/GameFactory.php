@@ -28,8 +28,8 @@ class GameFactory extends Factory
         $randomPlayerId = $this->faker->randomElement($playersIds); //elige un id aleatorio de los players
 
         return [
-            'die1_value' => $die1Value,
-            'die2_value' => $die2Value,
+            'dice1_value' => $die1Value,
+            'dice2_value' => $die2Value,
             'won' => $wasGameWon,
             'user_id' =>$randomPlayerId //asignara el id's aleatorio
         ];   

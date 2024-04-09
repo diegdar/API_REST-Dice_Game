@@ -59,8 +59,8 @@ class getGamesPlayerTest extends TestCase
             'data' => [
                 [
                     'Game Nº',
-                    'die1_value',
-                    'die2_value',
+                    'dice1_value',
+                    'dice2_value',
                     'won',
                 ],
             ],

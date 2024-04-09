@@ -11,8 +11,8 @@ class Game extends Model
     use HasFactory;
 
     protected $fillable = [//asignacion masiva para que solo permita crear valores por estos campos
-        'die1_value',
-        'die2_value',
+        'dice1_value',
+        'dice2_value',
         'won',
         'user_id'        
     ];
