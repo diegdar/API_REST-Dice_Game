@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
+/*
+🗒️NOTA:
+1:  // Longitud mínima de 8 caracteres
+    // Requiere al menos una mayúscula y una minúscula
+    // Requiere al menos un número
+    // Requiere al menos un símbolo
+    // Comprueba si la contraseña ha sido filtrada (opcional)
+*/
 class RegisterController extends Controller
 {
     // Método para registrar un nuevo usuario
@@ -24,7 +32,15 @@ class RegisterController extends Controller
                 }), //Solo permite repetir el nickname 'anonimo'
             ],
             'email' => 'required|email|unique:users',
-            'password' => 'required'
+            'password' => [
+                'required',
+                Password::/*nota 1*/
+                    min(8) 
+                    ->mixedCase()   
+                    ->numbers()     
+                    ->symbols()     
+                    ->uncompromised(), 
+            ],
         ]);
 
         // Si la validación falla, se retorna un error con los detalles
